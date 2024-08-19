@@ -21,6 +21,7 @@ function App() {
                 return pokemonData;
             } catch (error) {
                 console.error('Error fetching data:', error);
+                return null;
             }
         };
 
