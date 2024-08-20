@@ -1,39 +1,22 @@
 import { useEffect } from 'react';
-import './App.css';
-import client from './client';
+import './App.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMultiplePokemonById } from './RTK/thunk';
 
 function App() {
+    const dispatch = useDispatch();
+    const pokemonData = useSelector((state) => state.pokemon);
+    console.log(pokemonData);
+
     useEffect(() => {
-        const numberArray = Array.from({ length: 151 }, (_, idx) => idx + 1);
-        const fetchPokemonAPI = async (pokemonId) => {
-            try {
-                const pokemonTextResponse = await client.get(`/pokemon-species/${pokemonId}`);
-                const pokemonImgResponse = await client.get(`/pokemon-form/${pokemonId}`);
-                const textData = pokemonTextResponse.data;
-                const imgData = pokemonImgResponse.data.sprites;
-                const pokemonData = {
-                    id: pokemonId,
-                    name: textData.names.find((el) => el.language.name === 'ko').name,
-                    description: textData.flavor_text_entries.find((el) => el.language.name === 'ko').flavor_text,
-                    frontImg: imgData.front_default,
-                    backImg: imgData.back_default,
-                };
-                return pokemonData;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                return null;
-            }
-        };
-
-        const fetchPokemonData = async () => {
-            const pokemonInfo = await Promise.all(numberArray.map((el) => fetchPokemonAPI(el)));
-            console.log(pokemonInfo);
-        };
-
-        fetchPokemonData();
+        dispatch(fetchMultiplePokemonById(151));
     }, []);
 
-    return <></>;
+    return (
+        <>
+            <h1 className="text-[40px] text-center">포켓몬 도감</h1>
+        </>
+    );
 }
 
 export default App;
